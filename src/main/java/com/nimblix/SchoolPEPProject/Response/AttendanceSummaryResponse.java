@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AttendanceSummaryResponse {
 
-
+    private String studentName;
+    private double attendancePercentage;
     private long daysPresent;
     private long daysAbsent;
     private long tardies;

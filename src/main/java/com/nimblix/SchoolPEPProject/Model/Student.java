@@ -46,6 +46,11 @@ public class Student {
     @Column(name = "updated_time")
     private String updatedTime;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Parent parent;
+
+
 
     @PrePersist
     protected void onCreate(){

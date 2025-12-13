@@ -32,9 +32,7 @@ public interface ParentsService {
     ParentSettingsResponse getSettings(Long parentId);
     ParentSettingsResponse updateSettings(Long parentId, UpdateSettingsRequest request);
 
-//    void updateProfile(Long parentId, ParentProfileUpdateRequest request);
-//
-//    void changePassword(Long parentId, ParentChangePasswordRequest request);
+
 
     void updateProfileByEmail(String email, ParentProfileUpdateRequest request);
 

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "parent")
@@ -45,9 +47,10 @@ public class Parent {
     @Enumerated(EnumType.STRING)
     private ParentRole role;
 
-    @OneToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Student> students;
+
 
     @Column(name = "created_time")
     private String createdTime;

@@ -115,10 +115,14 @@ public class ParentServiceImpl implements ParentsService {
         Parent parent=parentRepository.findById(parentId)
                 .orElseThrow(()-> new RuntimeException("Parent not found"));
 
-        Student student=parent.getStudent();
-        if (student == null) {
+
+
+        List<Student> students = parent.getStudents();
+        if (students == null || students.isEmpty()) {
             throw new RuntimeException("No student is linked to this parent yet");
         }
+        Student student = students.get(0); // TEMP: using first child
+
 
         long totalDays = attendanceRepository.countByStudentId(student.getId());
 
@@ -160,8 +164,11 @@ public class ParentServiceImpl implements ParentsService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        parent.setStudent(student);
-        parentRepository.save(parent);
+//        parent.setStudent(student);
+//        parentRepository.save(parent);
+        student.setParent(parent);
+        studentRepository.save(student);
+
     }
 
 
@@ -171,10 +178,13 @@ public class ParentServiceImpl implements ParentsService {
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(() -> new RuntimeException("Parent not found"));
 
-        Student student = parent.getStudent();
-        if (student == null) {
-            throw new RuntimeException("No student linked");
+
+        List<Student> children = parent.getStudents();
+        if (children.isEmpty()) {
+            throw new RuntimeException("No students linked");
         }
+        Student student = children.get(0); // use first child OR pass studentId
+
 
         List<Grade> gradeList = gradeRepository.findByStudentId(student.getId());
 
@@ -200,11 +210,17 @@ public class ParentServiceImpl implements ParentsService {
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(() -> new RuntimeException("Parent not found"));
 
-        Student student = parent.getStudent();
-
-        if (student == null) {
-            throw new RuntimeException("No student linked to this parent");
+//        Student student = parent.getStudent();
+//
+//        if (student == null) {
+//            throw new RuntimeException("No student linked to this parent");
+//        }
+        List<Student> children = parent.getStudents();
+        if (children.isEmpty()) {
+            throw new RuntimeException("No students linked to this parent");
         }
+        Student student = children.get(0); // use first child OR pass studentId
+
 
         List<ReportCard> reportCards =
                 reportCardRepository.findByStudentIdAndTerm(student.getId(), term);
@@ -233,24 +249,20 @@ public class ParentServiceImpl implements ParentsService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-//        if (!student.getParent().getParentId().equals(parentId)) {
-//            throw new RuntimeException("Unauthorized access to student attendance");
-//        }
-//        Parent parent = parentRepository.findById(parentId)
-//                .orElseThrow(() -> new RuntimeException("Parent not found"));
-//
-//        if (parent.getStudent() == null ||
-//                !parent.getStudent().getId().equals(studentId)) {
-//            throw new RuntimeException("Unauthorized access to student attendance");
-//        }
+
 
         Parent parent = parentRepository.findById(parentId)
                 .orElseThrow(() -> new RuntimeException("Parent not found"));
 
-        if (parent.getStudent() == null ||
-                !parent.getStudent().getId().equals(studentId)) {
+
+        boolean ownsChild = parent.getStudents()
+                .stream()
+                .anyMatch(s -> s.getId().equals(studentId));
+
+        if (!ownsChild) {
             throw new RuntimeException("Unauthorized access to student attendance");
         }
+
 
 
 
